@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.matheustorres.gestao_vagas.models.CandidateModel;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/candidate")
 public class CandidateController {
 
     @PostMapping("/")
-    public void create(@RequestBody CandidateModel candidateModel) {
+    public void create(@Valid @RequestBody CandidateModel candidateModel) {
         System.out.println("Candidato");
         System.out.println(candidateModel.getEmail());
     }
