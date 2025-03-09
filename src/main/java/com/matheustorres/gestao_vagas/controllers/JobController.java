@@ -7,26 +7,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.matheustorres.gestao_vagas.models.CompanyModel;
-import com.matheustorres.gestao_vagas.services.CompanyService;
+import com.matheustorres.gestao_vagas.models.JobModel;
+import com.matheustorres.gestao_vagas.services.JobService;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/company")
-public class CompanyController {
+@RequestMapping("/job")
+public class JobController {
 
     @Autowired
-    private CompanyService companyService;
+    private JobService jobService;
 
     @PostMapping("/")
-    public ResponseEntity<Object> create(@Valid @RequestBody CompanyModel companyModel) {
+    public ResponseEntity<Object> create(@Valid @RequestBody JobModel jobModel) {
         try {
-            var result = this.companyService.save(companyModel);
+            var result = this.jobService.save(jobModel);
             return ResponseEntity.ok().body(result);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-
     }
 }
