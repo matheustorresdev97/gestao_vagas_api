@@ -1,0 +1,10 @@
+services:
+  postgres:
+    container_name: gestao_vagas_db
+    image: "bitnami/postgresql:17.4.0"
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_DATABASE=gestao_vagas
