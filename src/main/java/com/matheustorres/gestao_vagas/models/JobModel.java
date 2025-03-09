@@ -32,7 +32,7 @@ public class JobModel {
     private LocalDateTime createdAt;
 
     @ManyToOne()
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "company_id", insertable = false, updatable = false)
     private CompanyModel companyModel;
 
     @Column(name = "company_id")
