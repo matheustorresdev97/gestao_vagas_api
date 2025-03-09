@@ -55,13 +55,15 @@ public class CandidateService {
         }
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        var expiresIn = Instant.now().plus(Duration.ofMinutes(10));
         var token = JWT.create()
                 .withIssuer("javagas")
                 .withSubject(candidate.getId().toString())
                 .withClaim("roles", Arrays.asList("candidate"))
-                .withExpiresAt(Instant.now().plus(Duration.ofMinutes(10)))
+                .withExpiresAt(expiresIn)
+
                 .sign(algorithm);
 
-        return new AuthCandidateResponseRecord(token);
+        return new AuthCandidateResponseRecord(token, expiresIn.toEpochMilli());
     }
 }
