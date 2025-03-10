@@ -17,6 +17,6 @@ public class JobService {
     }
 
     public List<JobModel> execute(String filter) {
-        return this.jobRepository.findByDescriptionContaining(filter);
+        return this.jobRepository.findByDescriptionContainingIgnoreCase(filter);
     }
 }
