@@ -3,6 +3,7 @@ package com.matheustorres.gestao_vagas.services;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import com.matheustorres.gestao_vagas.exceptions.UserFoundException;
 import com.matheustorres.gestao_vagas.models.CandidateModel;
 import com.matheustorres.gestao_vagas.records.AuthCandidateRequestRecord;
 import com.matheustorres.gestao_vagas.records.AuthCandidateResponseRecord;
+import com.matheustorres.gestao_vagas.records.ProfileCandidateResponseDTO;
 import com.matheustorres.gestao_vagas.repositories.CandidateRepository;
 
 @Service
@@ -43,7 +45,7 @@ public class CandidateService {
         return this.candidateRepository.save(candidateModel);
     }
 
-    public AuthCandidateResponseRecord execute(AuthCandidateRequestRecord authCandidateRequestRecord) {
+    public AuthCandidateResponseRecord authenticateCandidate(AuthCandidateRequestRecord authCandidateRequestRecord) {
         var candidate = this.candidateRepository.findByUsername(authCandidateRequestRecord.username())
                 .orElseThrow(() -> new UsernameNotFoundException("Username/password incorrect"));
 
@@ -66,4 +68,20 @@ public class CandidateService {
 
         return new AuthCandidateResponseRecord(token, expiresIn.toEpochMilli());
     }
+
+    public ProfileCandidateResponseDTO findCandidateProfile(UUID idCandidate) {
+        var candidate = this.candidateRepository.findById(idCandidate)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        var candidateRecord = ProfileCandidateResponseDTO.builder()
+                .description(candidate.getDescription())
+                .email(candidate.getEmail())
+                .username(candidate.getUsername())
+                .name(candidate.getName())
+                .id(candidate.getId())
+                .build();
+
+        return candidateRecord;
+    }
+
 }
