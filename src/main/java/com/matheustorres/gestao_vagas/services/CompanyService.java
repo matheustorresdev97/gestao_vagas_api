@@ -2,6 +2,7 @@ package com.matheustorres.gestao_vagas.services;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 
 import javax.naming.AuthenticationException;
 
@@ -17,6 +18,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.matheustorres.gestao_vagas.exceptions.UserFoundException;
 import com.matheustorres.gestao_vagas.models.CompanyModel;
 import com.matheustorres.gestao_vagas.records.AuthCompanyRecord;
+import com.matheustorres.gestao_vagas.records.AuthCompanyResponseDTO;
 import com.matheustorres.gestao_vagas.repositories.CompanyRepository;
 
 @Service
@@ -44,7 +46,7 @@ public class CompanyService {
         return this.companyRepository.save(companyModel);
     }
 
-    public String execute(AuthCompanyRecord authCompanyRecord) throws AuthenticationException {
+    public AuthCompanyResponseDTO execute(AuthCompanyRecord authCompanyRecord) throws AuthenticationException {
         var company = this.companyRepository.findByUsername(authCompanyRecord.username()).orElseThrow(() -> {
             throw new UsernameNotFoundException("Username/password incorrect");
         });
@@ -57,11 +59,20 @@ public class CompanyService {
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
-        var token = JWT.create().withIssuer("javagas")
-                .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))
-                .withSubject(company.getId().toString()).sign(algorithm);
+        var expiresIn = Instant.now().plus(Duration.ofMinutes(10));
 
-        return token;
+        var token = JWT.create().withIssuer("javagas")
+                .withExpiresAt(expiresIn)
+                .withSubject(company.getId().toString())
+                .withClaim("roles", Arrays.asList("COMPANY"))
+                .sign(algorithm);
+
+        var authCompanyResponseDTO = AuthCompanyResponseDTO.builder()
+                .access_token(token)
+                .expires_in(expiresIn.toEpochMilli())
+                .build();
+
+        return authCompanyResponseDTO;
 
     }
 }
